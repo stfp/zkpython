@@ -18,15 +18,14 @@ from distutils.core import setup, Extension
 
 
 zookeepermodule = Extension("zookeeper",
-                            sources=["src/c/zookeeper.c"],
+#  "src/c/pyzk_docstrings.h"
+#, "src/python/zk.py"
+                            sources=["zookeeper.c"],
                             include_dirs=["/usr/include/c-client-src", "/usr/local/include/c-client-src"],
                             libraries=["zookeeper_mt"],
-#                            library_dirs=[zookeeper_basedir + "/src/c/.libs/",
-#                                          zookeeper_basedir + "/build/test/test-cppunit/.libs",
-#                                          "/usr/local/lib"]
-                                          )
+                            )
 
-setup( name="ZooKeeper",
+setup( name="zkpython",
        version = "0.4",
        description = "ZooKeeper Python bindings",
        ext_modules=[zookeepermodule] )
