@@ -112,6 +112,7 @@ typedef struct {
   int zhandle;
   PyObject *callback;
   int permanent;
+  int called;
 }pywatcher_t;
 
 /* This array exists because we need to ref. count the global watchers
@@ -215,6 +216,7 @@ pywatcher_t *create_pywatcher(int zh, PyObject* cb, int permanent)
   }
   Py_INCREF(cb);
   ret->zhandle = zh; ret->callback = cb; ret->permanent = permanent;
+  ret->called = 0;
   return ret;
 }
 
@@ -431,10 +433,15 @@ void watcher_dispatch(zhandle_t *zzh, int type, int state,
   }
 
   gstate = PyGILState_Ensure();
-  PyObject *arglist = Py_BuildValue("(i,i,i,s)", pyw->zhandle,type, state, path);
-  if (PyObject_CallObject((PyObject*)callback, arglist) == NULL) {
-    PyErr_Print();
-  }
+  if (pyw->called == 0)
+  {	
+    pyw->called = 1;
+    PyObject *arglist = Py_BuildValue("(i,i,i,s)", pyw->zhandle,type, state, path);
+    if (PyObject_CallObject((PyObject*)callback, arglist) == NULL) {
+      PyErr_Print();
+    }
+  }   
+	  
   if (pyw->permanent == 0 && (type != ZOO_SESSION_EVENT || is_unrecoverable(zzh))) {
     free_pywatcher(pyw);
   }
