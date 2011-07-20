@@ -87,12 +87,12 @@ PyObject *err_to_exception(int errcode) {
   case ZINVALIDCALLBACK:
     return InvalidCallbackException;
   case ZSESSIONMOVED:
-    return SessionMovedException;
+    return SessionMovedException;      
   case ZOK:
     return NULL;
   case ZSYSTEMERROR:
   default:
-    return SystemErrorException;
+    return SystemErrorException;     
   }
 }
 
